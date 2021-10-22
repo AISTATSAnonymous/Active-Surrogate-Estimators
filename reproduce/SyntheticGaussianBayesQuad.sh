@@ -1,0 +1,3 @@
+python main.py +configs=SyntheticGaussianBayesQuad dataset.creation_args.dim=5 dataset.creation_args.scale_val=3.1651492312077627e-06 & \
+python main.py +configs=SyntheticGaussianBayesQuad dataset.creation_args.dim=15 dataset.creation_args.scale_val=1.4641438601278823e-17 & \
+python main.py +configs=SyntheticGaussianBayesQuad dataset.creation_args.dim=25 dataset.creation_args.scale_val=2.638296168999101e-29

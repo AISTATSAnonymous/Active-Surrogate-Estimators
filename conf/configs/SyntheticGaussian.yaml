@@ -1,0 +1,211 @@
+# @package _global_
+hydra:
+  run:
+    dir: ${BASE_DIR}/outputs/SyntheticGaussian_dim_${dataset.creation_args.dim}/${now:%Y-%m-%d-%H-%M-%S}-${id}/
+hoover:
+  save_data: false
+dataset:
+  test_proportion: 1
+  n_points: 100000
+  standardize: false
+  name: DoubleGaussianDataset
+  creation_args:
+    dim: 5
+    p_mean: 0
+    f_mean: 3
+    p_std: 5
+    f_std: 5
+    dim_normalise_mean: true
+experiment:
+  n_runs: 1000
+  random_seed: -1
+  debug: false
+  save_data_until: 10
+  loss: YIsLoss
+  log_every: 1
+  save_every: 1
+  abort_test_after: 250
+risk_estimators:
+- ExactExpectedRiskEstimator: null
+- TrueRiskEstimator: null
+- BiasedRiskEstimator: null
+- ImportanceWeightedRiskEstimatorForPDFs: null
+- FancyUnbiasedRiskEstimator: null
+- FullSurrogateASMC: null
+- FullSurrogateASMC: Increase
+- QuadratureRiskEstimator: null
+- ConvexCombo: FromIS2ASMC
+acquisition_functions:
+- RandomAcquisition: null
+- RandomAcquisitionSampleFromPDFDirectly: null
+- AnySurrogateAcquisitionValue: TorchGaussianNoSample
+- AnySurrogateAcquisitionValue: TorchGaussianDefensive
+- AnySurrogateAcquisitionValue: TorchGaussianNoClip
+- AnySurrogateAcquisitionValueSampleFromPDFDirectly: TorchGaussian
+- AnySurrogateAcquisitionValueSampleFromPDFDirectly: TorchGaussianDefensive
+acquisition:
+  sample: true
+  animate: false
+  animate_until: 10
+  lazy_save: true
+  uniform_clip: true
+  uniform_clip_val: 0.2
+  lazy_save_schedule: []
+id: 1
+model:
+  name: DummyModel
+  make_efficient: true
+risk_configs:
+  FromIS2ASMC:
+    schedule: alpha_from_1to2
+    n_max: 20
+    risks:
+    - FancyUnbiasedRiskEstimator
+    - FullSurrogateASMC
+  Increase:
+    increase_pool: true
+    after_m_steps: 0
+    N_test: 10000000
+acquisition_configs:
+  extra:
+    mean_only: false
+    init_w_last_params: false
+    lazy_schedule:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 26
+    - 27
+    - 28
+    - 29
+    - 30
+    - 31
+    - 32
+    - 33
+    - 34
+    - 35
+    - 36
+    - 37
+    - 38
+    - 39
+    - 40
+    - 41
+    - 42
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 55
+    - 60
+    - 65
+    - 70
+    - 75
+    - 80
+    - 85
+    - 90
+    - 95
+    - 100
+    - 110
+    - 120
+    - 130
+    - 140
+    - 150
+    - 160
+    - 170
+    - 180
+    - 190
+    - 200
+    - 220
+    - 240
+    - 250
+    - 300
+    - 400
+    - 500
+    - 700
+    - 999
+    - 1000
+    - 5000
+    - 10000
+    - 50000
+    - 99000
+    std_center_init: true
+  TorchGaussian:
+    name: TorchGaussianCurveFit
+    make_efficient: true
+    mean_only: ${acquisition_configs.extra.mean_only}
+    dim: ${dataset.creation_args.dim}
+    mean: ${dataset.creation_args.f_mean}
+    std: ${dataset.creation_args.f_std}
+    std_center_init: ${acquisition_configs.extra.std_center_init}
+    init_with_last_params: ${acquisition_configs.extra.init_w_last_params}
+    lazy: true
+    lazy_schedule: ${acquisition_configs.extra.lazy_schedule}
+  TorchGaussianNoSample:
+    name: TorchGaussianCurveFit
+    make_efficient: true
+    mean_only: ${acquisition_configs.extra.mean_only}
+    dim: ${dataset.creation_args.dim}
+    mean: ${dataset.creation_args.f_mean}
+    std: ${dataset.creation_args.f_std}
+    std_center_init: ${acquisition_configs.extra.std_center_init}
+    init_with_last_params: ${acquisition_configs.extra.init_w_last_params}
+    lazy: true
+    lazy_schedule: ${acquisition_configs.extra.lazy_schedule}
+    acquisition:
+      sample: false
+      uniform_clip: false
+  TorchGaussianDefensive:
+    name: TorchGaussianCurveFit
+    make_efficient: true
+    mean_only: ${acquisition_configs.extra.mean_only}
+    dim: ${dataset.creation_args.dim}
+    mean: ${dataset.creation_args.f_mean}
+    std: ${dataset.creation_args.f_std}
+    std_center_init: ${acquisition_configs.extra.std_center_init}
+    init_with_last_params: ${acquisition_configs.extra.init_w_last_params}
+    lazy: true
+    lazy_schedule: ${acquisition_configs.extra.lazy_schedule}
+    acquisition:
+      uniform_clip: false
+      defensive: true
+      defensive_val: 0.1
+  TorchGaussianNoClip:
+    name: TorchGaussianCurveFit
+    make_efficient: true
+    mean_only: ${acquisition_configs.extra.mean_only}
+    dim: ${dataset.creation_args.dim}
+    mean: ${dataset.creation_args.f_mean}
+    std: ${dataset.creation_args.f_std}
+    std_center_init: ${acquisition_configs.extra.std_center_init}
+    init_with_last_params: ${acquisition_configs.extra.init_w_last_params}
+    lazy: true
+    lazy_schedule: ${acquisition_configs.extra.lazy_schedule}
+    acquisition:
+      uniform_clip: false

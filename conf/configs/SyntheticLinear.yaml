@@ -1,0 +1,81 @@
+# @package _global_
+id: 1
+hydra:
+  run:
+    dir: ${BASE_DIR}/outputs/SyntheticLinear_dim_${dataset.creation_args.n_pixels}/${now:%Y-%m-%d-%H-%M-%S}-${id}/
+hoover:
+  save_data: false
+dataset:
+  test_proportion: 1.0
+  n_points: 1000
+  standardize: true
+  name: OnlineToyDataset
+  x_std: false
+  y_std: false
+  creation_args:
+    n_pixels: 1
+    test_distribution: correlated-gaussian
+    test_mean: 100
+    test_std: 10
+    test_c_ij: 0.7
+    normalise: False
+experiment:
+  n_runs: 1000
+  random_seed: -1
+  debug: false
+  save_data_until: 10
+  loss: YIsLoss
+  log_every: 1
+  save_every: 5
+  abort_test_after: 100
+risk_estimators:
+- ExactExpectedRiskEstimator: null
+- TrueRiskEstimator: null
+- BiasedRiskEstimator: null
+- FancyUnbiasedRiskEstimator: null
+- QuadratureRiskEstimator: null
+- ConvexComboWithOutUncertainty: FromIS2Quad
+- ConvexCombo: FromIS2ASMC
+- FullSurrogateASMC: null
+acquisition_functions:
+- TrueLossAcquisition: null
+- RandomAcquisition: null
+- AnySurrogateAcquisitionValue: LinearModel
+- AnySurrogateRandomAcquisition: LinearModel
+- AnySurrogateDistanceBasedAcquisition: LinearModel
+acquisition:
+  sample: true
+  animate: true
+  animate_until: 10
+  lazy_save: true
+  uniform_clip: true
+  uniform_clip_val: 0.2
+  lazy_save_schedule:
+  - 0
+  - 100
+  - 300
+  - 500
+  - 700
+model:
+  name: DummyModel
+  make_efficient: true
+risk_configs:
+  FromIS2Quad:
+    schedule: alpha_from_1to2
+  FromIS2ASMC:
+    schedule: alpha_from_1to2
+    risks:
+    - FancyUnbiasedRiskEstimator
+    - FullSurrogateASMC
+acquisition_configs:
+  LinearModel:
+    name: LinearRegressionModel
+    efficient: true
+    abs: false
+    lazy: false
+    acquisition:
+      sample: true
+      uniform_clip: false
+    weights: FancyUnbiasedRiskEstimator
+    sk_cfg:
+      fit_intercept: false
